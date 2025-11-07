@@ -25,7 +25,7 @@ jobs:
           VITE_CREDAL_API_KEY: ${{ secrets.VITE_CREDAL_API_KEY }}
           VITE_CREDAL_AGENT_ID: ${{ secrets.VITE_CREDAL_AGENT_ID }}
           VITE_USER_EMAIL: ${{ secrets.VITE_USER_EMAIL }}
-      - uses: actions/upload-pages-artifact@v2
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
@@ -37,4 +37,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
