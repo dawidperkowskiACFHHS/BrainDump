@@ -2,7 +2,7 @@ import { cn } from '../../lib/utils';
 
 export function Input({ className, label, error, ...props }) {
   const id = props.id || props.name;
-  
+
   return (
     <div className="w-full">
       {label && (

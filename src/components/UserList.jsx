@@ -17,9 +17,7 @@ export function UserList({ onSelectUser }) {
     setNewUserName('');
   };
 
-  const filteredUsers = users.filter(u => 
-    u.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredUsers = users.filter((u) => u.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <div className="space-y-6">
@@ -28,7 +26,7 @@ export function UserList({ onSelectUser }) {
           <Brain className="w-6 h-6 text-blue-500" />
           Digital Brains
         </h2>
-        
+
         <form onSubmit={handleCreate} className="space-y-3">
           <Input
             value={newUserName}

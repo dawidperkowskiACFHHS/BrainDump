@@ -1,5 +1,13 @@
 import { create } from 'zustand';
-import { getAllUsers, getUser, addUser, updateUser, deleteUser, getSettings, saveSettings } from './db';
+import {
+  getAllUsers,
+  getUser,
+  addUser,
+  updateUser,
+  deleteUser,
+  getSettings,
+  saveSettings,
+} from './db';
 
 export const useStore = create((set, get) => ({
   users: [],
@@ -23,7 +31,7 @@ export const useStore = create((set, get) => ({
       id: crypto.randomUUID(),
       name,
       createdAt: Date.now(),
-      documents: []
+      documents: [],
     };
     await addUser(user);
     await get().loadUsers();
@@ -45,7 +53,7 @@ export const useStore = create((set, get) => ({
       content,
       originalFile: file,
       fileType: file.type,
-      uploadedAt: Date.now()
+      uploadedAt: Date.now(),
     };
     user.documents.push(doc);
     await updateUser(user);
@@ -55,7 +63,7 @@ export const useStore = create((set, get) => ({
 
   deleteDocument: async (userId, docId) => {
     const user = await getUser(userId);
-    user.documents = user.documents.filter(d => d.id !== docId);
+    user.documents = user.documents.filter((d) => d.id !== docId);
     await updateUser(user);
     await get().loadUsers();
     get().showToast('Document deleted successfully', 'success');
@@ -82,5 +90,5 @@ export const useStore = create((set, get) => ({
 
   toggleDarkMode: () => {
     set({ darkMode: !get().darkMode });
-  }
+  },
 }));

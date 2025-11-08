@@ -22,34 +22,30 @@ export function ChatBox({ user }) {
     if (!input.trim() || loading) return;
 
     const userMessage = { role: 'user', content: input.trim() };
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setLoading(true);
 
     // Try local answer first
     const localAnswer = answerLocalQuestion(input.trim(), user);
     if (localAnswer) {
-      setMessages(prev => [...prev, { role: 'assistant', content: localAnswer }]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: localAnswer }]);
       setLoading(false);
       return;
     }
 
-    const knowledge = user.documents.map(d => d.content).join('\n\n');
+    const knowledge = user.documents.map((d) => d.content).join('\n\n');
     const systemPrompt = `You are ${user.name}. Answer questions based only on this knowledge:\n\n${knowledge}`;
 
-    const apiMessages = [
-      { role: 'system', content: systemPrompt },
-      ...messages,
-      userMessage
-    ];
+    const apiMessages = [{ role: 'system', content: systemPrompt }, ...messages, userMessage];
 
     try {
       let assistantMessage = '';
-      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
 
       for await (const chunk of streamChat(apiMessages, user.documents)) {
         assistantMessage += chunk;
-        setMessages(prev => {
+        setMessages((prev) => {
           const newMessages = [...prev];
           newMessages[newMessages.length - 1].content = assistantMessage;
           return newMessages;
@@ -61,10 +57,10 @@ export function ChatBox({ user }) {
         endpoint: 'Credal ACF API',
         model: 'Credal Agent',
         stack: error.stack,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
       showError(errorDetails);
-      setMessages(prev => prev.slice(0, -1));
+      setMessages((prev) => prev.slice(0, -1));
     } finally {
       setLoading(false);
     }
@@ -97,9 +93,7 @@ export function ChatBox({ user }) {
                 key={idx}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`flex gap-3 ${
-                  msg.role === 'user' ? 'justify-end' : 'justify-start'
-                }`}
+                className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {msg.role === 'assistant' && (
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">

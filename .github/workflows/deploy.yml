@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 permissions:
   contents: read
   pages: write
@@ -20,6 +24,8 @@ jobs:
           node-version: 18
           cache: 'npm'
       - run: npm ci
+      - run: npm run lint
+      - run: npm audit --audit-level=high
       - run: npm run build
         env:
           VITE_CREDAL_API_KEY: ${{ secrets.VITE_CREDAL_API_KEY }}

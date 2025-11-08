@@ -50,9 +50,7 @@ export function ErrorModal() {
 
           <div>
             <p className="text-sm text-gray-400 mb-1">Model:</p>
-            <p className="text-white font-mono text-sm bg-black/50 p-3 rounded-lg">
-              {error.model}
-            </p>
+            <p className="text-white font-mono text-sm bg-black/50 p-3 rounded-lg">{error.model}</p>
           </div>
 
           <div>

@@ -29,7 +29,10 @@ export function DocumentUpload({ user }) {
 
   const handleView = (doc) => {
     if (doc.originalFile) {
-      const blob = doc.originalFile instanceof Blob ? doc.originalFile : new Blob([doc.originalFile], { type: doc.fileType });
+      const blob =
+        doc.originalFile instanceof Blob
+          ? doc.originalFile
+          : new Blob([doc.originalFile], { type: doc.fileType });
       const url = URL.createObjectURL(blob);
       window.open(url, '_blank');
       setTimeout(() => URL.revokeObjectURL(url), 100);
@@ -40,7 +43,10 @@ export function DocumentUpload({ user }) {
 
   const handleDownload = (doc) => {
     if (doc.originalFile) {
-      const blob = doc.originalFile instanceof Blob ? doc.originalFile : new Blob([doc.originalFile], { type: doc.fileType });
+      const blob =
+        doc.originalFile instanceof Blob
+          ? doc.originalFile
+          : new Blob([doc.originalFile], { type: doc.fileType });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -65,7 +71,7 @@ export function DocumentUpload({ user }) {
           <FileText className="w-6 h-6 text-purple-500" />
           Documents for {user.name}
         </h2>
-        
+
         <input
           type="file"
           id="file-upload"
@@ -85,7 +91,9 @@ export function DocumentUpload({ user }) {
             <Upload className="w-8 h-8 text-gray-400" />
           )}
           <div className="text-center">
-            <p className="text-lg font-medium">{uploading ? 'Uploading...' : 'Drop files or click to upload'}</p>
+            <p className="text-lg font-medium">
+              {uploading ? 'Uploading...' : 'Drop files or click to upload'}
+            </p>
             <p className="text-sm text-gray-500 mt-1">PDF, TXT, DOCX supported</p>
           </div>
         </label>
@@ -110,7 +118,9 @@ export function DocumentUpload({ user }) {
                 <FileText className="w-5 h-5 text-blue-400" />
                 <div>
                   <p className="font-medium">{doc.filename}</p>
-                  <p className="text-sm text-gray-500">{new Date(doc.uploadedAt).toLocaleDateString()}</p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(doc.uploadedAt).toLocaleDateString()}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -142,7 +152,10 @@ export function DocumentUpload({ user }) {
       </div>
 
       {viewingDoc && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-6" onClick={() => setViewingDoc(null)}>
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+          onClick={() => setViewingDoc(null)}
+        >
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -160,7 +173,9 @@ export function DocumentUpload({ user }) {
               </button>
             </div>
             <div className="flex-1 overflow-y-auto bg-black/50 rounded-xl p-4">
-              <pre className="whitespace-pre-wrap text-sm text-gray-300 font-mono">{viewingDoc.content}</pre>
+              <pre className="whitespace-pre-wrap text-sm text-gray-300 font-mono">
+                {viewingDoc.content}
+              </pre>
             </div>
           </motion.div>
         </div>

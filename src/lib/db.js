@@ -7,7 +7,7 @@ let dbInstance = null;
 
 export async function initDB() {
   if (dbInstance) return dbInstance;
-  
+
   dbInstance = await openDB(DB_NAME, DB_VERSION, {
     upgrade(db) {
       if (!db.objectStoreNames.contains('users')) {
@@ -18,7 +18,7 @@ export async function initDB() {
       }
     },
   });
-  
+
   return dbInstance;
 }
 
@@ -50,13 +50,15 @@ export async function deleteUser(id) {
 export async function getSettings() {
   const db = await initDB();
   const settings = await db.get('settings', 'config');
-  return settings?.value || {
-    apiEndpoint: '',
-    apiKey: '',
-    model: 'gpt-4',
-    temperature: 0.7,
-    maxTokens: 1000
-  };
+  return (
+    settings?.value || {
+      apiEndpoint: '',
+      apiKey: '',
+      model: 'gpt-4',
+      temperature: 0.7,
+      maxTokens: 1000,
+    }
+  );
 }
 
 export async function saveSettings(settings) {
@@ -74,15 +76,15 @@ export async function exportData() {
 export async function importData(data) {
   const db = await initDB();
   const tx = db.transaction(['users', 'settings'], 'readwrite');
-  
+
   await tx.objectStore('users').clear();
   for (const user of data.users || []) {
     await tx.objectStore('users').add(user);
   }
-  
+
   if (data.settings) {
     await tx.objectStore('settings').put({ key: 'config', value: data.settings });
   }
-  
+
   await tx.done;
 }

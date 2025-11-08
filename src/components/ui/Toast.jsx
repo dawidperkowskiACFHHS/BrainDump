@@ -3,21 +3,21 @@ import { CheckCircle, XCircle, Info, X } from 'lucide-react';
 
 export function Toast() {
   const { toast, showToast } = useStore();
-  
+
   if (!toast) return null;
-  
+
   const icons = {
     success: <CheckCircle className="w-5 h-5" />,
     error: <XCircle className="w-5 h-5" />,
-    info: <Info className="w-5 h-5" />
+    info: <Info className="w-5 h-5" />,
   };
-  
+
   const colors = {
     success: 'bg-green-600',
     error: 'bg-red-600',
-    info: 'bg-blue-600'
+    info: 'bg-blue-600',
   };
-  
+
   return (
     <div
       role="alert"

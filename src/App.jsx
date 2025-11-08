@@ -47,18 +47,20 @@ function App() {
     <HashRouter>
       <div className="min-h-screen bg-black text-white">
         <div className="fixed inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none" />
-        
+
         <Header />
 
         <main id="main-content" className="relative pt-24 pb-16">
           <AnimatePresence mode="wait">
             <Routes>
-              <Route path="/" element={
-                <HomePage selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
-              } />
-              <Route path="/chat" element={
-                <ChatPage selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
-              } />
+              <Route
+                path="/"
+                element={<HomePage selectedUser={selectedUser} setSelectedUser={setSelectedUser} />}
+              />
+              <Route
+                path="/chat"
+                element={<ChatPage selectedUser={selectedUser} setSelectedUser={setSelectedUser} />}
+              />
               <Route path="/settings" element={<Settings />} />
             </Routes>
           </AnimatePresence>
@@ -73,7 +75,7 @@ function App() {
 
 function Header() {
   const location = useLocation();
-  
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-xl">
       <div className="container mx-auto px-6 py-4">
@@ -85,11 +87,21 @@ function Header() {
             </div>
             <span className="text-2xl font-bold gradient-text">BrainVault</span>
           </Link>
-          
+
           <nav className="flex items-center gap-2">
             <NavLink to="/" active={location.pathname === '/'} icon={Brain} label="Brains" />
-            <NavLink to="/chat" active={location.pathname === '/chat'} icon={MessageSquare} label="Chat" />
-            <NavLink to="/settings" active={location.pathname === '/settings'} icon={SettingsIcon} label="Settings" />
+            <NavLink
+              to="/chat"
+              active={location.pathname === '/chat'}
+              icon={MessageSquare}
+              label="Chat"
+            />
+            <NavLink
+              to="/settings"
+              active={location.pathname === '/settings'}
+              icon={SettingsIcon}
+              label="Settings"
+            />
           </nav>
         </div>
       </div>
@@ -102,9 +114,7 @@ function NavLink({ to, active, icon: Icon, label }) {
     <Link
       to={to}
       className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-        active 
-          ? 'bg-white/10 text-white' 
-          : 'text-gray-400 hover:text-white hover:bg-white/5'
+        active ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'
       }`}
       aria-label={label}
     >
@@ -140,7 +150,7 @@ function HomePage({ selectedUser, setSelectedUser }) {
           >
             <UserList onSelectUser={setSelectedUser} />
           </motion.div>
-          
+
           {selectedUser && (
             <motion.div
               initial={{ opacity: 0, x: 20 }}
@@ -174,12 +184,16 @@ function ChatPage({ selectedUser, setSelectedUser }) {
           <select
             id="user-select"
             value={selectedUser?.id || ''}
-            onChange={(e) => setSelectedUser(users.find(u => u.id === e.target.value))}
+            onChange={(e) => setSelectedUser(users.find((u) => u.id === e.target.value))}
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
           >
-            <option value="" className="bg-gray-900">-- Select a brain --</option>
-            {users.map(user => (
-              <option key={user.id} value={user.id} className="bg-gray-900">{user.name}</option>
+            <option value="" className="bg-gray-900">
+              -- Select a brain --
+            </option>
+            {users.map((user) => (
+              <option key={user.id} value={user.id} className="bg-gray-900">
+                {user.name}
+              </option>
             ))}
           </select>
         </div>

@@ -6,7 +6,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 export async function extractText(file) {
   const ext = file.name.split('.').pop().toLowerCase();
-  
+
   switch (ext) {
     case 'txt':
       return await extractTextFromTxt(file);
@@ -27,13 +27,13 @@ async function extractTextFromPdf(file) {
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
   let text = '';
-  
+
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
-    text += content.items.map(item => item.str).join(' ') + '\n';
+    text += content.items.map((item) => item.str).join(' ') + '\n';
   }
-  
+
   return text;
 }
 
