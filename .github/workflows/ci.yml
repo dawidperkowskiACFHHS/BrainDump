@@ -28,7 +28,7 @@ jobs:
           node-version: 18
           cache: 'npm'
       - run: npm ci
-      - run: npm audit --audit-level=moderate
+      - run: npm audit --audit-level=high
 
   build:
     runs-on: ubuntu-latest

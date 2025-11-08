@@ -63,7 +63,7 @@ function buildResponse(question, results, userName) {
   // Build contextual response
   let response = `Based on ${userName}'s documents, here's what I found:\n\n`;
   
-  results.forEach((result, i) => {
+  results.forEach((result) => {
     response += `**From ${result.doc.filename}:**\n`;
     
     if (result.matches.length > 0) {
