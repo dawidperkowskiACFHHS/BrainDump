@@ -7,7 +7,7 @@ import { Button } from './ui/Button';
 import { Send, Loader2, Trash2, User, Bot } from 'lucide-react';
 
 export function ChatBox({ user }) {
-  const { showToast, showError } = useStore();
+  const { showError } = useStore();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);

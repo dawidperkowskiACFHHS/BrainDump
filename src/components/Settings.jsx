@@ -55,7 +55,7 @@ export function Settings() {
               <div>
                 <p className="text-sm text-blue-300 font-medium mb-1">Credal AI Integration</p>
                 <p className="text-xs text-gray-400">
-                  Powered by ACF's secure Credal instance with pre-configured agent
+                  Powered by ACF&apos;s secure Credal instance with pre-configured agent
                 </p>
               </div>
             </div>

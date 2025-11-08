@@ -1,61 +1,84 @@
-const CREDAL_API_KEY = import.meta.env.VITE_CREDAL_API_KEY;
-const CREDAL_AGENT_ID = import.meta.env.VITE_CREDAL_AGENT_ID;
-const USER_EMAIL = import.meta.env.VITE_USER_EMAIL;
-const CREDAL_ENDPOINT = 'https://app.credal.acf.gov/api/v0/copilots/sendMessage';
-
+// Local RAG system - documents stay in browser, AI-like responses from local search
 export async function* streamChat(messages, userDocs) {
-  let response;
-  try {
-    const userMessage = messages[messages.length - 1].content;
-    const systemPrompt = messages.find((m) => m.role === 'system')?.content || '';
-
-    // Build context from user's documents
-    const context = userDocs.map((d) => `[${d.filename}]\n${d.content}`).join('\n\n---\n\n');
-    const fullMessage = `${systemPrompt}\n\nContext from documents:\n${context}\n\nUser question: ${userMessage}`;
-
-    console.log('RAG Context being sent:', {
-      docCount: userDocs.length,
-      messageLength: fullMessage.length,
-    });
-
-    response = await fetch(CREDAL_ENDPOINT, {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${CREDAL_API_KEY}`,
-      },
-      body: JSON.stringify({
-        agentId: CREDAL_AGENT_ID,
-        message: fullMessage,
-        userEmail: USER_EMAIL,
-      }),
-    });
-  } catch (error) {
-    const corsHint = error.message.includes('Failed to fetch')
-      ? ' This is likely a CORS issue. The app needs to be deployed to the same domain as the Credal API (app.credal.acf.gov) or the API needs to allow CORS from localhost for development.'
-      : '';
-    throw new Error(`Network Error: ${error.message}.${corsHint}`);
+  const userName = messages.find(m => m.role === 'system')?.content?.match(/You are (.+?)\./)?.[1] || 'this person';
+  const userMessage = messages[messages.length - 1].content;
+  const query = userMessage.toLowerCase();
+  
+  // Search local documents for relevant content
+  const searchResults = searchLocalDocs(query, userDocs);
+  
+  if (searchResults.length === 0) {
+    yield `I don't have any information about "${userMessage}" in ${userName}'s documents. Try asking about specific topics, projects, or document names.`;
+    return;
   }
+  
+  // Build context-aware response
+  const response = buildResponse(userMessage, searchResults, userName);
+  yield response;
+}
 
-  if (!response.ok) {
-    let errorBody = '';
-    try {
-      errorBody = await response.text();
-    } catch (e) {
-      // ignore
+function searchLocalDocs(query, docs) {
+  const keywords = query.toLowerCase().split(' ').filter(w => w.length > 3);
+  
+  return docs.map(doc => {
+    const content = doc.content.toLowerCase();
+    const filename = doc.filename.toLowerCase();
+    
+    // Calculate relevance score
+    let score = 0;
+    const matches = [];
+    
+    keywords.forEach(keyword => {
+      if (filename.includes(keyword)) score += 10;
+      
+      let pos = content.indexOf(keyword);
+      while (pos !== -1) {
+        score += 1;
+        // Extract snippet around match
+        const start = Math.max(0, pos - 150);
+        const end = Math.min(doc.content.length, pos + 150);
+        matches.push({
+          snippet: doc.content.slice(start, end).trim(),
+          position: pos
+        });
+        pos = content.indexOf(keyword, pos + 1);
+      }
+    });
+    
+    return { doc, score, matches: matches.slice(0, 3) };
+  })
+  .filter(r => r.score > 0)
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 5);
+}
+
+function buildResponse(question, results, userName) {
+  const isListQuestion = question.match(/what|list|show|tell me about|files|documents/i);
+  
+  if (isListQuestion && question.match(/files|documents/i)) {
+    const fileList = results.map(r => `• **${r.doc.filename}**`).join('\n');
+    return `${userName} has these relevant documents:\n\n${fileList}\n\nAsk me about any specific topic or document for more details.`;
+  }
+  
+  // Build contextual response
+  let response = `Based on ${userName}'s documents, here's what I found:\n\n`;
+  
+  results.forEach((result, i) => {
+    response += `**From ${result.doc.filename}:**\n`;
+    
+    if (result.matches.length > 0) {
+      result.matches.forEach(match => {
+        response += `\n...${match.snippet}...\n`;
+      });
+    } else {
+      // Show beginning of document if no specific matches
+      response += `\n${result.doc.content.slice(0, 300)}...\n`;
     }
-    throw new Error(
-      `API Error ${response.status}: ${response.statusText}${errorBody ? `\n\nResponse: ${errorBody}` : ''}`
-    );
-  }
-
-  const data = await response.json();
-  const message = data.sendChatResult?.response?.message;
-
-  if (message) {
-    yield message;
-  } else {
-    throw new Error('No response message from Credal API');
-  }
+    
+    response += '\n';
+  });
+  
+  response += `\n*Found in ${results.length} document${results.length > 1 ? 's' : ''}*`;
+  
+  return response;
 }

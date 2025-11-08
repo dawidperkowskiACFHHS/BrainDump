@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../lib/store';
 import { extractText } from '../lib/parser';
-import { Button } from './ui/Button';
 import { Upload, Trash2, Loader2, FileText, Eye, Download, X } from 'lucide-react';
 
 export function DocumentUpload({ user }) {

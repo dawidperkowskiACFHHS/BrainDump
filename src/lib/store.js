@@ -47,12 +47,21 @@ export const useStore = create((set, get) => ({
 
   addDocument: async (userId, file, content) => {
     const user = await getUser(userId);
+    
+    let processedFilename = file.name;
+    let processedFile = file;
+    
+    if (!file.name.match(/\.(md|mdx|txt)$/i)) {
+      processedFilename = file.name.replace(/\.[^.]+$/, '.txt');
+      processedFile = new File([content], processedFilename, { type: 'text/plain' });
+    }
+    
     const doc = {
       id: crypto.randomUUID(),
-      filename: file.name,
+      filename: processedFilename,
       content,
-      originalFile: file,
-      fileType: file.type,
+      originalFile: processedFile,
+      fileType: processedFile.type,
       uploadedAt: Date.now(),
     };
     user.documents.push(doc);
